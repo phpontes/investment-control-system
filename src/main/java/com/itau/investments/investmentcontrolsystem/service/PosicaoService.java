@@ -44,4 +44,13 @@ public class PosicaoService {
     			.map(op -> op.getPrecoUnitario().multiply(BigDecimal.valueOf(op.getQuantidade())))
     			.reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    
+    public BigDecimal calcularPnlTotalDoUsuario(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+
+        return posicaoRepository.findByUsuario(usuario).stream()
+                .map(Posicao::getPnl)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }
